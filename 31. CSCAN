@@ -1,0 +1,115 @@
+int abs_diff(int a, int b) 
+
+{
+
+    return (a > b) ? (a - b) : (b - a);
+
+}
+
+void sort_tracks(int tracks[], int n) 
+
+{
+
+    int i, j, temp;
+
+    for (i = 0; i < n - 1; i++) 
+
+    {
+
+        for (j = 0; j < n - i - 1; j++) 
+
+        {
+
+            if (tracks[j] > tracks[j + 1]) 
+
+            {
+
+                temp = tracks[j];
+
+                tracks[j] = tracks[j + 1];
+
+                tracks[j + 1] = temp;
+
+            }
+
+        }
+
+    }
+
+}
+
+int find_next_track(int tracks[], int n, int head) 
+
+{
+
+    int i;
+
+    for (i = 0; i < n; i++) 
+
+    {
+
+        if (tracks[i] > head)
+
+            return i;
+
+    }
+
+    return 0;
+
+}
+
+void cscan(int tracks[], int n, int head) 
+
+{
+
+    int i, total_head_movement = 0;
+
+    sort_tracks(tracks, n);
+
+    int next_track = find_next_track(tracks, n, head);
+
+    for (i = next_track; i < n; i++) 
+
+    {
+
+        total_head_movement += abs_diff(head, tracks[i]);
+
+        head = tracks[i];
+
+    }
+
+    total_head_movement += abs_diff(head, 0);
+
+    head = 0;
+
+    for (i = 0; i < next_track; i++) 
+
+    {
+
+        total_head_movement += abs_diff(head, tracks[i]);
+
+        head = tracks[i];
+
+    }
+
+    float avg_head_movement = (float)total_head_movement / n;
+
+    printf("Average head movement: %.2f\n", avg_head_movement);
+
+}
+
+int main() 
+
+{
+
+    int tracks[] = {55, 58, 60, 70, 18};
+
+    int n = sizeof(tracks) / sizeof(tracks[0]);
+
+    int head = 50;
+
+    cscan(tracks, n, head);
+
+    return 0;
+
+}
