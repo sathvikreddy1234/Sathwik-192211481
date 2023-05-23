@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+int abs_diff(int a, int b) 
+{
+    return (a > b) ? (a - b) : (b - a);
+}
+
+void sort_tracks(int tracks[], int n) 
+{
+    int i, j, temp;
+    for (i = 0; i < n - 1; i++) 
+    {
+        for (j = 0; j < n - i - 1; j++) 
+        {
+            if (tracks[j] > tracks[j + 1]) 
+            {
+                temp = tracks[j];
+                tracks[j] = tracks[j + 1];
+                tracks[j + 1] = temp;
+            }
+        }
+    }
+}
+void scan(int tracks[], int n, int head) 
+{
+    int i, total_head_movement = 0;
+    sort_tracks(tracks, n);
+    int next_track = 0;
+    for (i = 0; i < n; i++) 
+    {
+        if (tracks[i] > head) 
+        {
+            next_track = i;
+            break;
+        }
+    }
+    for (i = next_track; i < n; i++) 
+    {
+        total_head_movement += abs_diff(head, tracks[i]);
+        head = tracks[i];
+    }
+    total_head_movement += abs_diff(head, 0);
+    head = 0;
+    for (i = next_track - 1; i >= 0; i--) 
+    {
+        total_head_movement += abs_diff(head, tracks[i]);
+        head = tracks[i];
+    }
+    float avg_head_movement = (float)total_head_movement / n;
+    printf("Average head movement: %.2f\n", avg_head_movement);
+}
+int main()
+{
+    int tracks[] = {55, 58, 60, 70, 18, 90, 150, 160, 184};
+    int n = sizeof(tracks) / sizeof(tracks[0]);
+    int head = 50; 
+    scan(tracks, n, head);
+    return 0;
+}
