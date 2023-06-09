@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+int clookDiskScheduling(int *tracks, int noOfTracks, int initialPosition) 
+{
+    int totalHeadMovement = 0;
+    for (int i = 0; i < noOfTracks - 1; i++) 
+    {
+        for (int j = 0; j < noOfTracks - i - 1; j++) 
+        {
+            if (tracks[j] > tracks[j + 1]) 
+            {
+                int temp = tracks[j];
+                tracks[j] = tracks[j + 1];
+                tracks[j + 1] = temp;
+            }
+        }
+    }
+    int initialIndex = 0;
+    for (int i = 0; i < noOfTracks; i++) 
+    {
+        if (tracks[i] >= initialPosition) 
+        {
+            initialIndex = i;
+            break;
+        }
+    }
+    int currentIndex = initialIndex;
+    while (currentIndex < noOfTracks)
+    {
+        totalHeadMovement += abs(tracks[currentIndex] - initialPosition);
+        initialPosition = tracks[currentIndex];
+        currentIndex++;
+    }
+    totalHeadMovement += abs(tracks[0] - initialPosition);
+    initialPosition = tracks[0];
+    currentIndex = 1;
+    while (currentIndex < initialIndex) 
+    {
+        totalHeadMovement += abs(tracks[currentIndex] - initialPosition);
+        initialPosition = tracks[currentIndex];
+        currentIndex++;
+    }
+    return totalHeadMovement;
+}
+int main() 
+{
+    int tracks[] = {55, 58, 60, 70, 18};
+    int noOfTracks = sizeof(tracks) / sizeof(tracks[0]);
+    int initialPosition = 50;  
+    int averageHeadMovement = clookDiskScheduling(tracks, noOfTracks, initialPosition) / noOfTracks;
+    printf("Average head movement: %d\n", averageHeadMovement);
+    return 0;
+}
