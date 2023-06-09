@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdbool.h>
+typedef struct 
+{
+    int processId;
+    int burstTime;
+    int waitingTime;
+    int turnaroundTime;
+} 
+Process;
+void swap(Process *a, Process *b) 
+{
+    Process temp = *a;
+    *a = *b;
+    *b = temp;
+}
+void sortProcesses(Process *processes, int n) 
+{
+    for (int i = 0; i < n - 1; i++) 
+    {
+        for (int j = 0; j < n - i - 1; j++) 
+        {
+            if (processes[j].burstTime > processes[j + 1].burstTime)
+            {
+                swap(&processes[j], &processes[j + 1]);
+            }
+        }
+    }
+}
+void computeTimes(Process *processes, int n) 
+{
+    processes[0].waitingTime = 0;
+    processes[0].turnaroundTime = processes[0].burstTime;
+    for (int i = 1; i < n; i++) 
+    {
+        processes[i].waitingTime = processes[i - 1].waitingTime + processes[i - 1].burstTime;
+        processes[i].turnaroundTime = processes[i].waitingTime + processes[i].burstTime;
+    }
+}
+
+void computeAverages(Process *processes, int n, float *avgWaitingTime, float *avgTurnaroundTime) 
+{
+    int totalWaitingTime = 0;
+    int totalTurnaroundTime = 0;
+    for (int i = 0; i < n; i++) 
+    {
+        totalWaitingTime += processes[i].waitingTime;
+        totalTurnaroundTime += processes[i].turnaroundTime;
+    }
+    *avgWaitingTime = (float)totalWaitingTime / n;
+    *avgTurnaroundTime = (float)totalTurnaroundTime / n;
+}
+int main() 
+{
+    Process processes[] = {
+        {0, 2, 0, 0},
+        {1, 4, 0, 0},
+        {2, 8, 0, 0}
+    };
+    int n = sizeof(processes) / sizeof(processes[0]);
+    sortProcesses(processes, n);
+    computeTimes(processes, n);
+    float avgWaitingTime, avgTurnaroundTime;
+    computeAverages(processes, n, &avgWaitingTime, &avgTurnaroundTime);
+    printf("Average Waiting Time: %.2f\n", avgWaitingTime);
+    printf("Average Turnaround Time: %.2f\n", avgTurnaroundTime);
+    return 0;
+}
