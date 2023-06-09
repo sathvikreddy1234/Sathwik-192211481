@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdbool.h>
+
+int findShortestSeekTime(int *tracks, int current, bool *visited, int noOfTracks) 
+{
+    int shortestSeekTime = INT_MAX;
+    int shortestSeekIndex = -1;
+    for (int i = 0; i < noOfTracks; i++) 
+    {
+        if (!visited[i] && abs(tracks[i] - current) < shortestSeekTime) 
+        {
+            shortestSeekTime = abs(tracks[i] - current);
+            shortestSeekIndex = i;
+        }
+    }
+    return shortestSeekIndex;
+}
+int sstfDiskScheduling(int *tracks, int noOfTracks, int initialPosition) 
+{
+    bool *visited = (bool *)malloc(noOfTracks * sizeof(bool));
+    for (int i = 0; i < noOfTracks; i++) 
+    {
+        visited[i] = false;
+    }
+    int currentPosition = initialPosition;
+    int totalHeadMovement = 0;
+    for (int i = 0; i < noOfTracks; i++) 
+    {
+        int shortestSeekIndex = findShortestSeekTime(tracks, currentPosition, visited, noOfTracks);
+        visited[shortestSeekIndex] = true;
+        totalHeadMovement += abs(tracks[shortestSeekIndex] - currentPosition);
+        currentPosition = tracks[shortestSeekIndex];
+    }
+    free(visited);
+    return totalHeadMovement;
+}
+int main() 
+{
+    int tracks[] = {55, 58, 60, 70, 18};
+    int noOfTracks = sizeof(tracks) / sizeof(tracks[0]);
+    int initialPosition = 50;
+    int averageHeadMovement = sstfDiskScheduling(tracks, noOfTracks, initialPosition) / noOfTracks;
+    printf("Average head movement: %d\n", averageHeadMovement);
+    return 0;
+}
