@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdbool.h>
+bool isPagePresent(int pageFrames[], int noOfPageFrames, int page) 
+{
+    for (int i = 0; i < noOfPageFrames; i++) 
+    {
+        if (pageFrames[i] == page) 
+        {
+            return true;
+        }
+    }
+    return false;
+}
+int findOptimalPage(int pageReference[], int start, int end, int pageFrames[], int noOfPageFrames) 
+{
+    int optimalIndex = -1;
+    int farthestDistance = -1;
+    for (int i = 0; i < noOfPageFrames; i++) 
+    {
+        int j;
+        for (j = start; j < end; j++) 
+        {
+            if (pageReference[j] == pageFrames[i])
+            {
+                if (j > farthestDistance) 
+                {
+                    farthestDistance = j;
+                    optimalIndex = i;
+                }
+                break;
+            }
+        }
+        if (j == end) 
+        {
+            return i;
+        }
+    }
+    return optimalIndex;
+}
+int optimalPageReplacement(int pageReference[], int noOfPages, int noOfPageFrames) 
+{
+    int pageFaults = 0;
+    int pageFrames[noOfPageFrames];
+    for (int i = 0; i < noOfPageFrames; i++) 
+    {
+        pageFrames[i] = -1;
+    }
+    for (int i = 0; i < noOfPages; i++) 
+    {
+        if (!isPagePresent(pageFrames, noOfPageFrames, pageReference[i])) 
+        {
+            int index = findOptimalPage(pageReference, i + 1, noOfPages, pageFrames, noOfPageFrames);
+            if (index == -1) 
+            {
+                index = 0;
+            }
+            pageFrames[index] = pageReference[i];
+            pageFaults++;
+        }
+    }
+    return pageFaults;
+}
+int main() 
+{
+    int pageReference[] = {4, 1, 2, 4, 3, 2, 1, 5};
+    int noOfPages = sizeof(pageReference) / sizeof(pageReference[0]);
+    int noOfPageFrames = 3;
+    int pageFaults = optimalPageReplacement(pageReference, noOfPages, noOfPageFrames);
+    printf("Number of page faults: %d\n", pageFaults);
+    return 0;
+}
