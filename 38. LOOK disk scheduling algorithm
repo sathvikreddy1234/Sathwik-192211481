@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+int lookDiskScheduling(int *tracks, int noOfTracks, int initialPosition) 
+{
+    int totalHeadMovement = 0;
+    int direction = 1;
+    for (int i = 0; i < noOfTracks - 1; i++) 
+    {
+        for (int j = 0; j < noOfTracks - i - 1; j++)
+        {
+            if (tracks[j] > tracks[j + 1])
+            {
+                int temp = tracks[j];
+                tracks[j] = tracks[j + 1];
+                tracks[j + 1] = temp;
+            }
+        }
+    }
+    int initialIndex = 0;
+    for (int i = 0; i < noOfTracks; i++) 
+    {
+        if (tracks[i] >= initialPosition) 
+        {
+            initialIndex = i;
+            break;
+        }
+    }
+    int currentIndex = initialIndex;
+    while (currentIndex >= 0 && currentIndex < noOfTracks)
+    {
+        totalHeadMovement += abs(tracks[currentIndex] - initialPosition);
+        initialPosition = tracks[currentIndex];
+        currentIndex += direction;
+    }
+    return totalHeadMovement;
+}
+int main() 
+{
+    int tracks[] = {55, 58, 60, 70, 18};
+    int noOfTracks = sizeof(tracks) / sizeof(tracks[0]);
+    int initialPosition = 50;
+    int averageHeadMovement = lookDiskScheduling(tracks, noOfTracks, initialPosition) / noOfTracks;
+    printf("Average head movement: %d\n", averageHeadMovement);
+    return 0;
+}
